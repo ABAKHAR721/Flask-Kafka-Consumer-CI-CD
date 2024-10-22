@@ -18,13 +18,17 @@ pipeline {
                 }
             }
         }
-        stage('Push to Docker Registry') {
+         stage('Push to Docker Registry') {
             steps {
                 script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerpassword', usernameVariable: 'dockeruser')]) {
+                    sh "docker login -u $dockeruser -p $dockerpassword "
                     sh 'docker push $DOCKER_IMAGE'
                 }
+                    
+                }
             }
-        }
+         }
         stage('Deploy to Kubernetes') {
             steps {
                 script {
